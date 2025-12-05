@@ -65,6 +65,12 @@ Price deviation vs. Black-Scholes benchmark
 
 Includes Control Variates for faster convergence.
 
+
+WEBSITE INTERFACE : 
+
+<img width="1920" height="2557" alt="screencapture-127-0-0-1-5000-2025-12-05-20_38_37" src="https://github.com/user-attachments/assets/181cd6cd-cae5-4979-b746-98e5e73f1ed0" />
+
+
 🧑‍💻 Author
 
 Tharun Raj
