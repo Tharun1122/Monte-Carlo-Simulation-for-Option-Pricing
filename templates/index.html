@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VolatiSense | Real-Market Volatility Modeling</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Chart.js for visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+
+<body>
+    <div class="background-glow"></div>
+
+    <div class="container">
+        <header>
+            <h1>Volati<span class="accent">Sense</span></h1>
+            <p>Real-Market Volatility Modeling & Derivative Pricing</p>
+        </header>
+
+        <main>
+            <!-- Input Section -->
+            <section class="glass-panel input-section">
+                <h2>Market Data & Parameters</h2>
+
+                <div class="search-box">
+                    <input type="text" id="tickerInput" placeholder="Enter Stock Ticker (e.g. AAPL, RELIANCE.NS)"
+                        autocomplete="off">
+                    <button id="fetchBtn" class="btn-primary">Fetch Data</button>
+                </div>
+
+                <form id="paramsForm">
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Current Price <span class="currency-label">($)</span></label>
+                            <input type="number" id="S0" step="0.01" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Strike Price <span class="currency-label">($)</span></label>
+                            <input type="number" id="K" step="0.01" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Time to Maturity (Years)</label>
+                            <input type="number" id="T" step="0.01" value="1.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Method</label>
+                            <!-- Custom Dropdown Structure -->
+                            <div class="custom-select-wrapper">
+                                <div class="custom-select" id="methodSelectTrigger">
+                                    <span class="custom-select__trigger">Standard Monte Carlo</span>
+                                    <div class="custom-options">
+                                        <span class="custom-option selected" data-value="standard">Standard Monte
+                                            Carlo</span>
+                                        <span class="custom-option" data-value="antithetic">Antithetic Variates</span>
+                                        <span class="custom-option" data-value="control_variate">Control Variates</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="method" value="standard">
+                        </div>
+                        <div class="input-group">
+                            <label>Volatility (σ)</label>
+                            <input type="number" id="sigma" step="0.0001" required>
+                            <span class="sub-label" id="volSource">Manual Input</span>
+                        </div>
+                        <div class="input-group">
+                            <label>Risk-Free Rate (r)</label>
+                            <input type="number" id="r" step="0.0001" value="0.045" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Dividend Yield (q)</label>
+                            <input type="number" id="q" step="0.0001" value="0.0" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Simulation Steps</label>
+                            <input type="number" id="steps" value="252">
+                        </div>
+                    </div>
+                    <button type="submit" id="simulateBtn" class="btn-action">Run Simulation</button>
+                    <!-- Separate button for convergence analysis -->
+                    <button type="button" id="convergenceBtn" class="btn-secondary"
+                        style="margin-top:10px; width:100%">Analyze Convergence</button>
+
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section hidden" id="results">
+                <h2>Pricing Results</h2>
+
+                <div class="cards-container">
+                    <!-- Call Options -->
+                    <div class="card card-call">
+                        <h3>Call Option</h3>
+                        <div class="result-row">
+                            <span>Black-Scholes:</span>
+                            <span class="value" id="bsCall">-</span>
+                        </div>
+                        <div class="result-row">
+                            <span>Monte Carlo:</span>
+                            <span class="value accent-green" id="mcCall">-</span>
+                        </div>
+                        <div class="std-err">Std Err: <span id="mcCallErr">-</span></div>
+                    </div>
+
+                    <!-- Put Options -->
+                    <div class="card card-put">
+                        <h3>Put Option</h3>
+                        <div class="result-row">
+                            <span>Black-Scholes:</span>
+                            <span class="value" id="bsPut">-</span>
+                        </div>
+                        <div class="result-row">
+                            <span>Monte Carlo:</span>
+                            <span class="value accent-red" id="mcPut">-</span>
+                        </div>
+                        <div class="std-err">Std Err: <span id="mcPutErr">-</span></div>
+                    </div>
+                </div>
+
+                <div class="glass-panel chart-container">
+                    <canvas id="simulationChart"></canvas>
+                </div>
+
+                <div class="glass-panel chart-container hidden" id="convergenceSection">
+                    <h3>Convergence Analysis</h3>
+                    <canvas id="convergenceChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
